@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <style>
+        body {
+            margin: 0;
+            padding-bottom: 3rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            text-align: left;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-content: space-between;
+        }
+
+        form {
+            background: hsl(268, 76%, 56%);
+            padding: 1rem;
+        }
+
+
+
+        .line {
+            display: inline-flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: 1rem;
+            min-width: min-content;
+            min-height: min-content;
+        }
+
+        #grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            margin: 1rem;
+
+        }
+
+        .res, pre {
+            background: hsl(268, 51%, 73%);
+            padding: 1rem;
+            margin: 0;
+            max-height: 400px;
+            overflow: auto;
+
+        }
+
+        .row-all {
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+        }
+
+        .row-all:first-child {
+            flex: 1;
+        }
+
+        .table-lol {
+            display: inline-flex;
+            flex-direction: row;
+            justify-content: start;
+            gap: 1rem;
+            margin: 1rem;
+            padding: 1rem;
+            width: min-content;
+            height: min-content;
+            flex-basis: 0;
+            background-color: hsla(29, 72%, 55%, 0.562);
+
+        }
+
+        .table-lol>div {
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: start;
+            margin: 1rem;
+            width: 250px;
+            min-height: min-content;
+            align-items: flex-start;
+            overflow: auto;
+        }
+
+        .table-lol>div:first-child {
+            flex: 1;
+        }
+
+        .table-lol>div>pre {
+            background: hsl(268, 51%, 73%);
+            padding: 1rem;
+            margin: 0;
+        }
+
+        @media (min-width: 800px) {
+            body {
+                flex-direction: row-reverse;
+            }
+
+            .table-lol {
+                flex-direction: column;
+                position: sticky;
+                top: 1rem;
+                width: 250px;
+
+            }
+        }
+    </style>
+</head>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost:3000')
+
+    var messages = document.getElementById('messages')
+    var form = document.getElementById('form')
+    var input = document.getElementById('input')
+    var token = null
+    var user = null
+
+    //on any event received
+    socket.onAny((event, ...args) => {
+        console.log(event, args)
+        document.getElementById('fuuuuuuu').innerHTML += JSON.stringify({ event: event, args: args }, undefined, 2)
+    })
+
+    function updateDataToken(data) {
+        document.getElementById('data-token').innerHTML = JSON.stringify(data.token, undefined, 2)
+        document.getElementById('data-user').innerHTML = JSON.stringify(data, undefined, 2)
+    }
+
+    function createUser() {
+        var form = document.getElementById('create-user-form')
+        var username = form.elements['username'].value
+        var password = form.elements['password'].value
+        var dataUser = {
+            username: username,
+            password: password
+        }
+        //fetch
+        fetch('http://localhost:3000/createuser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataUser),
+        }).then((response) => {
+            return response.json()
+        }).then((data) => {
+            console.log(data)
+            document.getElementById('create-user').innerHTML = JSON.stringify({ data: dataUser, res: data }, undefined, 2)
+            token = data.token
+            user = data
+            updateDataToken(data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+    function login() {
+        var form = document.getElementById('login-form')
+        var username = form.elements['username'].value
+        var password = form.elements['password'].value
+        var dataUser = {
+            username: username,
+            password: password
+        }
+        //fetch
+        fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataUser),
+        }).then((response) => {
+            return response.json()
+        }).then((data) => {
+            console.log(data)
+            document.getElementById('login').innerHTML = JSON.stringify({ data: dataUser, res: data }, undefined, 2)
+            token = data.token
+            user = data
+            updateDataToken(data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+    function createChannel() {
+        var form = document.getElementById('create-channel-form')
+        var channelName = form.elements['channel'].value
+        var dataChannel = {
+            token: token,
+            channelName: channelName
+        }
+        //socketio
+        socket.emit('/create', dataChannel, (data) => {
+            console.log(data)
+            document.getElementById('create-channel').innerHTML = JSON.stringify({ data: dataChannel, res: data }, undefined, 2)
+        })
+        return false
+    }
+
+    function deleteChannel() {
+        var form = document.getElementById('delete-channel-form')
+        var channelName = form.elements['channel'].value
+        var dataChannel = {
+            token: token,
+            channelName: channelName
+        }
+        //socketio
+        socket.emit('/delete', dataChannel, (data) => {
+            console.log(data)
+            document.getElementById('delete-channel').innerHTML = JSON.stringify({ data: dataChannel, res: data }, undefined, 2)
+        })
+        return false
+    }
+
+    function joinChannel() {
+        var form = document.getElementById('join-channel-form')
+        var channelName = form.elements['channel'].value
+        var dataChannel = {
+            token: token,
+            channelName: channelName
+        }
+        //socketio
+        socket.emit('/join', dataChannel, (data) => {
+            console.log(data)
+            document.getElementById('join-channel').innerHTML = JSON.stringify({ data: dataChannel, res: data }, undefined, 2)
+        })
+        return false
+    }
+
+    function quitChannel() {
+        var form = document.getElementById('quit-channel-form')
+        var channelName = form.elements['channel'].value
+        var dataChannel = {
+            token: token,
+            channelName: channelName
+        }
+        //socketio
+        socket.emit('/quit', dataChannel, (data) => {
+            console.log(data)
+            document.getElementById('quit-channel').innerHTML = JSON.stringify({ data: dataChannel, res: data }, undefined, 2)
+        })
+        return false
+    }
+
+    function listChannel() {
+        var form = document.getElementById('list-channel-form')
+        var channelName = form.elements['channel'].value
+        var dataChannel = {
+            token: token,
+            channelName: channelName
+        }
+        //socketio
+        socket.emit('/list', dataChannel, (data) => {
+            console.log(data)
+            document.getElementById('list-channel').innerHTML = JSON.stringify({ data: dataChannel, res: data }, undefined, 2)
+        })
+        return false
+    }
+
+    function renameChannel() {
+        var form = document.getElementById('rename-channel-form')
+        var channelName = form.elements['channel'].value
+        var newChannelName = form.elements['newChannel'].value
+        var dataChannel = {
+            token: token,
+            channelName: channelName,
+            newChannelName: newChannelName
+        }
+        //socketio
+        socket.emit('/rename', dataChannel, (data) => {
+            console.log(data)
+            document.getElementById('rename-channel').innerHTML = JSON.stringify({ data: dataChannel, res: data }, undefined, 2)
+        })
+        return false
+    }
+    function privateMessage() {
+        var form = document.getElementById('private-message-form')
+        var sender = form.elements['recipient'].value
+        var message = form.elements['message'].value
+        var dataMessage = {
+            token: token,
+            sender: sender,
+            message: message
+        }
+        //socketio
+        socket.emit('/msg', dataMessage, (data) => {
+            console.log(data)
+            document.getElementById('private-message').innerHTML = JSON.stringify({ data: dataMessage, res: data }, undefined, 2)
+        })
+    }
+    function sendMessage() {
+        var form = document.getElementById('send-message-form')
+        var channel = form.elements['channel'].value
+        var message = form.elements['message'].value
+
+        // Assuming you have the token from the login process
+        var dataMessage = {
+            token: token,
+            channelID: channel,
+            message: message
+        }
+
+        // Socket.io
+        socket.emit('message', dataMessage, function (data) {
+            console.log(data)
+            document.getElementById('send-message').innerHTML = JSON.stringify({ data: dataMessage, res: data }, undefined, 2)
+        })
+
+        return false
+    }
+
+    function initConnection() {
+        var form = document.getElementById('init-connection-form')
+        var data = {
+            token: token
+        }
+
+        // Socket.io
+        socket.emit('/INIT_CONNECTION', data, function (data) {
+            console.log(data)
+            document.getElementById('init-connection').innerHTML = JSON.stringify({ data: data }, undefined, 2)
+        })
+
+        return false
+    }
+
+    function getMessages() {
+        var form = document.getElementById('get-messages-form')
+        var channel = form.elements['channel'].value
+        var data = {
+            token: token,
+            channelID: channel
+        }
+
+        // Socket.io
+        socket.emit('/get-messages', data, function (data) {
+            console.log(data)
+            document.getElementById('get-messages').innerHTML = JSON.stringify({ data: data }, undefined, 2)
+        })
+
+        return false
+    }
+
+    function usersChan() {
+        var form = document.getElementById('usersChan-form')
+        var channel = form.elements['channel'].value
+        var data = {
+            token: token,
+            channelID: channel
+        }
+
+        // Socket.io
+        socket.emit('/usersChan', data, function (data) {
+            console.log(data)
+            document.getElementById('usersChan').innerHTML = JSON.stringify({ data: data }, undefined, 2)
+        })
+
+        return false
+    }
+
+    function nickkkk() {
+        var form = document.getElementById('nick-form')
+        var nick = form.elements['nick'].value
+        var data = {
+            token: token,
+            username: nick
+        }
+
+        // Socket.io
+        try {
+            socket.emit('/nick', data, function (data) {
+                console.log(data)
+                document.getElementById('nick-data').innerHTML = JSON.stringify({ data: data }, undefined, 2)
+                console.log("oui ?")
+            })
+        } catch (error) {
+            console.log("oui ?")
+            console.log(error)
+        }
+        console.log("oui ?")
+        return false
+    }
+
+    function kick() {
+        var form = document.getElementById('kick-form');
+        var nick = form.elements['nick'].value;
+        var channel = form.elements['channel'].value;
+        var data = {
+            token: token,
+            targetUsername: nick,
+            channelID: channel
+        };
+
+        try {
+            socket.emit('/kick', data, function (data) {
+                console.log(data);
+                document.getElementById('kick-data').innerHTML = JSON.stringify({ data: data }, undefined, 2);
+                console.log("Kick User: " + nick + " from Channel: " + channel);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+        return false;
+    }
+
+</script>
+
+<body>
+    <div class="table-lol">
+        <span>
+            <h3>user</h3>
+            <pre id="data-user"></pre>
+        </span>
+        <span>
+            <h3>token</h3>
+            <pre id="data-token"></pre>
+        </span>
+        <span>
+            <h3>event received</h3>
+            <pre id="fuuuuuuu"></pre>
+        </span>
+    </div>
+    <div id="grid">
+        <div class="line">
+            <form method="post" id="create-user-form" onsubmit="createUser(); return false;">
+                <h3>create user</h3>
+                <div>
+
+                    <label for="username">username</label>
+                    <input type="text" name="username" id="username">
+                </div>
+                <div>
+
+                    <label for="password">password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <button type="submit">envoyer</button>
+            </form>
+            <pre id="create-user" class="res"></pre>
+        </div>
+        <div class="line">
+            <form method="post" id="login-form" onsubmit="login(); return false;">
+                <h3>login</h3>
+                <div>
+
+                    <label for="username">username</label>
+                    <input type="text" name="username" id="username">
+                </div>
+                <div>
+
+                    <label for="password">password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <button type="submit">envoyer</button>
+            </form>
+            <pre id="login" class="res"></pre>
+        </div>
+        <div class="line">
+            <form method="post" id="create-channel-form" onsubmit="createChannel(); return false;">
+                <h3>create channel</h3>
+                <div>
+
+                    <label for="channel">channel</label>
+                    <input type="text" name="channel" id="channel">
+                </div>
+                <button type="submit">envoyer</button>
+            </form>
+            <pre id="create-channel" class="res"></pre>
+        </div>
+        <div class="line">
+            <form method="post" id="delete-channel-form" onsubmit="deleteChannel(); return false;">
+                <h3>delete channel</h3>
+                <div>
+
+                    <label for="channel">channel</label>
+                    <input type="text" name="channel" id="channel">
+                </div>
+                <button type="submit">envoyer</button>
+            </form>
+            <pre id="delete-channel" class="res"></pre>
+        </div>
+        <div class="line">
+            <form method="post" id="join-channel-form" onsubmit="joinChannel(); return false;">
+                <h3>join channel</h3>
+                <div>
+
+                    <label for="channel">channel</label>
+                    <input type="text" name="channel" id="channel">
+                </div>
+                <button type="submit">envoyer</button>
+            </form>
+            <pre id="join-channel" class="res"></pre>
+        </div>
+        <div class="line">
+            <form method="post" id="quit-channel-form" onsubmit="quitChannel(); return false;">
+                <h3>quit channel</h3>
+                <div>
+
+                    <label for="channel">channel</label>
+                    <input type="text" name="channel" id="channel">
+                </div>
+                <button type="submit">envoyer</button>
+            </form>
+            <pre id="quit-channel" class="res"></pre>
+        </div>
+        <div class="line">
+            <form method="post" id="list-channel-form" onsubmit="listChannel(); return false;">
+                <h3>list channel</h3>
+                <div>
+                    <label for="channel">channel</label>
+                    <input type="text" name="channel" id="channel">
+                    <button type="submit">envoyer</button>
+                </div>
+            </form>
+            <pre id="list-channel" class="res"></pre>
+        </div>
+        <div class="line">
+            <form method="post" id="rename-channel-form" onsubmit="renameChannel(); return false;">
+                <h3>rename channel</h3>
+                <div>
+                    <label for="channel">channel name</label>
+                    <input type="text" name="channel" id="channel">
+                </div>
+                <div>
+                    <label for="newChannel">new channel name</label>
+                    <input type="text" name="newChannel" id="newChannel">
+                </div>
+                <button type="submit">envoyer</button>
+            </form>
+            <pre id="rename-channel" class="res"></pre>
+        </div>
+
+        <div class="line">
+            <form method="post" id="private-message-form" onsubmit="privateMessage(); return false;">
+                <h3>Private Message</h3>
+                <div>
+                    <label for="recipient">Recipient</label>
+                    <input type="text" name="recipient" id="recipient">
+                </div>
+                <div>
+                    <label for="message">Message</label>
+                    <input type="text" name="message" id="message">
+                </div>
+                <button type="submit">Send Private Message</button>
+            </form>
+            <pre id="private-message" class="res"></pre>
+        </div>
+
+        <div class="line">
+            <form method="post" id="send-message-form" onsubmit="sendMessage(); return false;">
+                <h3>Send Message to Channel</h3>
+                <div>
+                    <label for="channel">channelID</label>
+                    <input type="text" name="channel" id="channel">
+                </div>
+                <div>
+                    <label for="message">Message</label>
+                    <input type="text" name="message" id="message">
+                </div>
+                <button type="submit">Send Message</button>
+            </form>
+            <pre id="send-message" class="res"></pre>
+        </div>
+
+        <div class="line">
+            <form method="post" id="init-connection-form" onsubmit="initConnection(); return false;">
+                <h3>Init Connection</h3>
+                <button type="submit">Init Connection</button>
+            </form>
+            <pre id="init-connection" class="res"></pre>
+        </div>
+
+        <div class="line">
+            <form method="post" id="get-messages-form" onsubmit="getMessages(); return false;">
+                <h3>Get Messages</h3>
+                <div>
+                    <label for="channel">channelID</label>
+                    <input type="text" name="channel" id="channel">
+                </div>
+                <button type="submit">Get Messages</button>
+            </form>
+            <pre id="get-messages" class="res"></pre>
+        </div>
+
+            <div class="line">
+                <form method="post" id="usersChan-form" onsubmit="usersChan(); return false;">
+                    <h3>usersChan</h3>
+                    <div>
+                        <label for="channel">channelID</label>
+                        <input type="text" name="channel" id="channel">
+                    </div>
+                    <button type="submit">usersChan</button>
+                </form>
+                <pre id="usersChan" class="res"></pre>
+            </div>
+
+            <div class="line">
+                <form method="post" id="nick-form" onsubmit="nickkkk(); return false;">
+                    <h3>nick</h3>
+                    <div>
+                        <label for="nick">nick</label>
+                        <input type="text" name="nick" id="nick">
+                    </div>
+                    <button type="submit">nick</button>
+                </form>
+                <pre id="nick-data" class="res"></pre>
+            </div>
+
+            <div class="line">
+                <form method="post" id="kick-form" onsubmit="kick(); return false;">
+                    <h3>Kick User</h3>
+                    <div>
+                        <label for="nick">Username to kick</label>
+                        <input type="text" name="nick" id="nick">
+                    </div>
+                    <div>
+                        <label for="channel">channelID</label>
+                        <input type="text" name="channel" id="channel">
+                    </div>
+                    <button type="submit">Kick User</button>
+                </form>
+                <pre id="kick-data" class="res"></pre>
+            </div>
+
+        </div>
+</body>
+
+</html>

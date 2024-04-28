@@ -1,0 +1,249 @@
+.chat-page-content{
+    display: flex;
+    justify-content: center;
+    gap: 3em;
+    width: fit-content;
+    margin: 0 auto;
+    overflow: scroll;
+}
+
+.my-msg{
+    align-self: flex-end;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.my-msg .text-msg{
+    background-color: #8a6de9;
+    color: white;
+    padding: 1em 2em;
+    border-radius: 10px;
+    max-width: 400px;
+    font-size: 0.8em;
+    margin: 0.5em 0;
+}
+
+.my-msg .sender-infos{
+    text-align: end;
+}
+
+.sender-infos{
+    font-size: 0.7em;
+    margin: 0;
+}
+
+.other-msg{
+    align-self: flex-start;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.other-msg .text-msg{
+    background-color: #f0f0f0;
+    padding: 1em 2em;
+    border-radius: 10px;
+    max-width: 400px;
+    font-size: 0.8em;
+    margin: 0.5em 0;
+}
+
+.username-msg{
+    font-weight: 600;
+    color: #8a6de9;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.tip{
+    background-color: #e9e5fa;
+    padding: 1em 2em;
+    border-radius: 10px;
+    max-width: 600px;
+    font-size: 0.8em;
+    margin: 1em auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alt-tip{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #f0f0f0;
+    padding: 0.5em 1em;
+    border-radius: 10px;
+    max-width: 300px;
+    font-size: 0.7em;
+    margin: 0.5em auto;
+}
+
+.material-symbols-outlined{
+    font-size: 0.8em;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.messages{
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.channel-list{
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    max-width: 300px;
+}
+
+
+h2{
+    text-decoration: underline 3px solid #8a6de9;
+    margin-top: 36px;
+    margin-bottom: 24px;
+}
+
+.create-btn{
+    padding: 0.5em 1em;
+    font-size: 1.2em;
+    font-family: "Cutive Mono", monospace;
+    font-weight: 600;
+    text-decoration: none;
+    color: white;
+    width: fit-content;
+    border-radius: 8px;
+    background-color: #A993FB;
+    border: none;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+.create-btn:hover{
+    background-color: #9b84fc;
+}
+
+.channel{
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+button{
+    height: fit-content;
+}
+
+.active-channel{
+    font-size: 1.2em;
+    font-weight: 600;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+}
+
+.search-input{
+    padding: 0.5em 1em;
+    font-size: 1em;
+    font-family: "Cutive Mono", monospace;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    background-color: #d9ccf8;
+}
+
+.send-btn{
+    padding: 0.5em 1em;
+    font-size: 1em;
+    font-family: "Cutive Mono", monospace;
+    font-weight: 600;
+    text-decoration: none;
+    color: white;
+    width: fit-content;
+    border-radius: 8px;
+    background-color: #A993FB;
+    border: none;
+    cursor: pointer;
+}
+
+.send-btn:hover{
+    background-color: #9b84fc;
+}
+
+.message-input{
+    padding: 0.5em 1em;
+    font-size: 1em;
+    font-family: "Cutive Mono", monospace;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    background-color: #d9ccf8;
+    margin-right: 0.5em;
+    width: 70%;
+    min-height: 44px;
+    height: fit-content;
+}
+
+.new-msg{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    margin-top: 2em;
+    width: 100%;
+    justify-content: center;
+}
+
+.automated-msg{
+    text-align: center;
+    width: 100%;
+    font-size: 0.8em;
+}
+
+.separator{
+    width: 80%;
+    height: 1px;
+    background-color: #292A34;
+    margin: 2em auto;
+}
+
+.happy{
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 600;
+    margin: 2em 0;
+}
+
+.quit-btn{
+    padding: 0.5em 0.6em;
+    font-size: 0.9em;
+    font-family: "Cutive Mono", monospace;
+    font-weight: 600;
+    text-decoration: none;
+    background-color: #E3E3E3;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.quit-btn:hover{
+    background-color: #d9d9d9;
+}
+
+.join-btn{
+    padding: 0.5em 0.6em;
+    font-size: 0.9em;
+    font-family: "Cutive Mono", monospace;
+    font-weight: 600;
+    text-decoration: none;
+    background-color: #A993FB;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+.join-btn:hover{
+    background-color: #9b84fc;
+}

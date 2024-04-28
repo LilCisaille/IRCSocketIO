@@ -1,0 +1,7 @@
+.channel-name{
+    cursor: pointer;
+}
+
+.channel-name:hover{
+    color: #8a6de9;
+}
